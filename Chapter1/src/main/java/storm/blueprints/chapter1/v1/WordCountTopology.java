@@ -2,6 +2,7 @@ package storm.blueprints.chapter1.v1;
 
 import backtype.storm.Config;
 import backtype.storm.LocalCluster;
+import backtype.storm.StormSubmitter;
 import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.tuple.Fields;
 import static storm.blueprints.utils.Utils.*;
@@ -36,11 +37,16 @@ public class WordCountTopology {
 
 		Config config = new Config();
 
-		LocalCluster cluster = new LocalCluster();
-
-		cluster.submitTopology(TOPOLOGY_NAME, config, builder.createTopology());
-		waitForSeconds(10);
-		cluster.killTopology(TOPOLOGY_NAME);
-		cluster.shutdown();
+		if (args.length == 0) {
+			LocalCluster cluster = new LocalCluster();
+			cluster.submitTopology(TOPOLOGY_NAME, config,
+					builder.createTopology());
+			waitForSeconds(10);
+			cluster.killTopology(TOPOLOGY_NAME);
+			cluster.shutdown();
+		} else {
+			StormSubmitter.submitTopology(args[0], config,
+					builder.createTopology());
+		}
 	}
 }
